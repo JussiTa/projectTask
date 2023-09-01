@@ -3,20 +3,41 @@ import  React, { Fragment, useState, useEffect} from 'react';
 import ProjectList from './ProjectList';
 import { Project} from './Project';
 import { projectAPI } from './projectAPI';
+import { useSelector, useDispatch } from 'react-redux';
+import { AppState } from './state/state';
+import { loadProjects } from './state/projectActions';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { ProjectState } from './state/projectTypes';
 
 
 
 
 function ProjectsPage(){
 
-    const [projects, setProjects] = useState<Project []>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | undefined>(undefined);
-    const [currentPage, setCurrentPage] = useState(1);
-    const handleMoreClick =() => {
+      const loading = useSelector(
+           (appState: AppState) => appState.projectState.loading
+          );
+          const projects = useSelector(
+            (appState: AppState) => appState.projectState.projects
+          );
+          const error = useSelector(
+            (appState: AppState) => appState.projectState.error
+          );
+          const currentPage = useSelector(
+            (appState: AppState) => appState.projectState.page
+          );
+          const dispatch = useDispatch<ThunkDispatch<ProjectState, any, AnyAction>>();
+        
+
+    //const [projects, setProjects] = useState<Project []>([]);
+    //const [loading, setLoading] = useState(false);
+    //const [error, setError] = useState<string | undefined>(undefined);
+    //const [currentPage, setCurrentPage] = useState(1);
+/*     const handleMoreClick =() => {
         setCurrentPage((currentPage) => currentPage +1);
-    };
-    const  saveProject = (project: Project) => { 
+    }; */
+/*     const  saveProject = (project: Project) => { 
         projectAPI
         .put(project)
         .then((updatedProject) =>{
@@ -25,11 +46,11 @@ function ProjectsPage(){
         });
         setProjects(updatedProjects);
         });
-    };
+    }; */
     
 
 
-    useEffect(() => {
+  /*   useEffect(() => {
         async function loadProjects() {
             setLoading(true);
             try{
@@ -53,7 +74,12 @@ function ProjectsPage(){
         }
         loadProjects();
 
-    },[currentPage]);
+    },[currentPage]); */
+
+    useEffect(()=>{
+
+      dispatch(loadProjects(1))
+    })
 
    
     return(
@@ -71,15 +97,16 @@ function ProjectsPage(){
                     </div>
                 </div>
             }
-        <ProjectList  onSave={saveProject} projects={projects} 
-        />
+        {/* <ProjectList  onSave={saveProject} projects={projects}  */}
+        {<ProjectList projects={projects} />}
+       
         {!loading && !error && (
             <div className ="row">
                 <div className='col-sm-12'>
                     <div className='button-group fluid'>
-                        <button className='button default' onClick={handleMoreClick}>
+                      {/*   <button className='button default' onClick={handleMoreClick}>
                             More...
-                        </button>
+                        </button> */}
                     </div>
                 </div>
             </div>
